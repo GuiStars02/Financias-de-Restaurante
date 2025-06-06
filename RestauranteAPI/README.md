@@ -1,6 +1,6 @@
 # Projeto RestauranteAPI 
 
-# Sobre o projeto (Em andamento)
+# Sobre o projeto 
 O projeto consiste em uma API Restful utilizando Asp. Net Core para um serviço de restaurante.
 
 ## Tecnologias utilizadas
@@ -10,7 +10,7 @@ O projeto consiste em uma API Restful utilizando Asp. Net Core para um serviço 
 - EntityFramework
 - MVC
 - MySQL
-- Dapper
+
 
 ### Tecnologias que serão implementadas no futuro
 - Autenticação e autorização com JWT
