@@ -1,0 +1,6 @@
+@RestauranteAPI_HostAddress = http://localhost:5074
+
+GET {{RestauranteAPI_HostAddress}}/
+Accept: application/json
+
+###

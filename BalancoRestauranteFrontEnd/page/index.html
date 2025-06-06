@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Restaurante - Pratos e Finanças</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
+
+</head>
+<body id="app">
+    <header>
+        <h1>{{ titulo }}</h1>
+    </header>
+
+    <main>
+        <section id="controle-pratos">
+            <h2>Gerenciamento de Pratos</h2>
+            <div class="form-prato-placeholder">
+                <h3>Adicionar Novo Prato</h3>
+                <button type="button" @click="mostrarModal()">Adicionar Prato</button>
+            </div>
+            <div class="lista-pratos">
+                <h3>Pratos Cadastrados</h3>
+                <table id="tabela-pratos">
+                    <thead>
+                        <tr>
+                            <th>Nome do Prato</th>
+                            <th>Preço</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody v-for="prato in listaPratos" :key="prato.idPrato" >
+                        <tr>
+                            <td> {{prato.nomePrato}} </td>
+                            <td> {{prato.valorPrato.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL'}) }} </td>
+                            <td> {{ prato.descricaoPrato }} </td>
+                            <td style="display: flex;">
+                                <button class="btn-editar" @click="editarPrato(prato)">Editar</button>
+                                <button class="btn-excluir" @click="deletePrato(prato)">Excluir</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <hr>
+        <section id="balanco-mensal">
+            <h2>Balanço Mensal</h2>
+
+            <div class="filtro-balanco">
+                <h3>Registrar entrada e saída</h3>
+                <button @click="registrarBalanco()">Registrar</button>
+            </div>
+
+            <div class="resumo-financeiro">
+                <div class="balanco-item">
+                    <span class="label">Total Entradas (Vendas):</span>
+                    <span class="valor positivo" id="total-entradas">{{totalBalancoVendas.toLocaleString('pr-BR', { style: 'currency', currency: 'BRL'})}}</span>
+                </div>
+                <div class="balanco-item">
+                    <span class="label">Total Saídas (Custos/Despesas):</span>
+                    <span class="valor negativo" id="total-saidas">{{totalBalancoSaida.toLocaleString('pr-BR', { style: 'currency', currency: 'BRL'})}}</span>
+                </div>
+                <hr>
+                <div class="balanco-item total">
+                    <span class="label">Saldo Final:</span>
+                    <span class="valor" id="saldo-final">{{ saldoFinal().toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}}</span>
+                </div>
+            </div>
+        </section>
+        <div v-if="showModel || showRegistro" class="modal-overlay"></div>
+        <div v-if="showModel" class="model">
+            <form>
+                <div class="form-prato">
+                    <div>
+                        <label>Nome do prato: </label>
+                        <input type="text" v-model="prato.nomePrato" placeholder="Digite o nome do prato">
+                    </div>
+                    <div>
+                        <label>Preço: </label>
+                        <input type="number" step="0.01" style='width: 100px; text-align: right;' v-model="prato.valorPrato">
+                    </div>
+                    <div>
+                        <label>Descrição: </label>
+                        <input type="text" style='width: 373px;' v-model="prato.descricaoPrato" placeholder="Digite a descrição do prato">
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: right; margin-top: 20px;">
+                    <button class="button" @click.prevent="salvarPrato()">Salvar</button>
+                    <button class="btn-excluir" @click.prevent="cancelar()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+        <div v-if="showRegistro" class="model-registro">
+            <form>
+                <div class="form-registro">
+                        <label>Selecione uma opção: </label>
+                        <select v-model="opcao">
+                            <option v-for="(op, index) in opcoesBalanco" :key="index" :value="op.value">
+                                {{ op.text }}
+                            </option>
+                        </select>
+                        
+                        <template v-if="opcao == 'entrada'">
+                            <label>Entrada: </label>
+                            <select v-model="pratoEscolhido">
+                                <option v-for="prato in listaPratos" :key="prato.idPrato" :value="prato">
+                                    {{ prato.nomePrato }}
+                                </option>
+                            </select>
+                        </template>
+
+                        <template v-if="opcao == 'saida'">
+                            <label>Saída</label>
+                            <input 
+                                type="number" 
+                                step="0.01" 
+                                placeholder="Digite o valor de saída" 
+                                style="text-align: right;"
+                                v-model="valorSaida"
+                            >
+                        </template>
+
+                </div>
+                <div style="display: flex; justify-content: right; margin-top: 20px;">
+                    <button class="button" @click.prevent="salvarBalanco()">Salvar</button>
+                    <button class="btn-excluir" @click.prevent="showRegistro = false">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Bar e Restaurante Da Penha. Todos os direitos reservados.</p>
+    </footer>
+    <script src="./assets/js/script.js"></script>
+</body>
+</html>
